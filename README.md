@@ -1,6 +1,6 @@
 <h1>ExpNo 1 :Developing AI Agent with PEAS Description</h1>
-<h3>Name: NALINIPRIYA G </h3>
-<h3>Register Number/Staff Id: TSIT031</h3>
+<h3>Name: VISHAL M S </h3>
+<h3>Register Number: 212224060306 </h3>
 
 
 <h3>AIM:</h3>
@@ -40,3 +40,56 @@
 <p>Treat unhealthy patients in each room. And check for the unhealthy patients in random room</p>
 <h3>STEP 5:</h3>
 <p>Measure the performance parameters: For each treatment performance incremented, for each movement performance decremented</p>
+```
+import random
+
+class MedicinePrescribingAgent:
+    def __init__(self):
+        self.performance = 0
+        self.current_room = "Room1"
+
+    def sense(self, patient):
+        """Sense the patient's temperature"""
+        return patient["temperature"]
+
+    def move(self):
+        """Move agent between Room1 and Room2"""
+        self.current_room = "Room2" if self.current_room == "Room1" else "Room1"
+        self.performance -= 1  # movement cost
+        print(f"Agent moved to {self.current_room}")
+
+    def treat(self, patient):
+        """Treat patient if unhealthy"""
+        if patient["temperature"] > 98.5:
+            print(f"Patient in {self.current_room} is unhealthy (Temp: {patient['temperature']}°F). Treating...")
+            self.performance += 10
+            patient["temperature"] = 98.5  # after treatment, set to normal
+        else:
+            print(f"Patient in {self.current_room} is healthy (Temp: {patient['temperature']}°F).")
+
+    def run(self, rooms, steps=5):
+        """Run the agent for a number of steps"""
+        for step in range(steps):
+            print(f"\n--- Step {step+1} ---")
+            patient = rooms[self.current_room]
+            temperature = self.sense(patient)
+            self.treat(patient)
+            self.move()  # move to next room
+
+        print("\nFinal Performance Score:", self.performance)
+
+
+# Environment: 2 rooms with patients
+rooms = {
+    "Room1": {"temperature": random.choice([97.5, 99.0, 100.2])},
+    "Room2": {"temperature": random.choice([97.8, 99.5, 101.0])}
+}
+
+print("Initial Room States:", rooms)
+
+# Create agent and run simulation
+agent = MedicinePrescribingAgent()
+agent.run(rooms, steps=6)```
+# OUTPUT
+<img width="726" height="800" alt="Screenshot 2025-09-30 104808" src="https://github.com/user-attachments/assets/8995b6fa-0259-47f3-8328-21abaed0f982" />
+
