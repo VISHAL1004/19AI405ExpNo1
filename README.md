@@ -1,6 +1,6 @@
 <h1>ExpNo 1 :Developing AI Agent with PEAS Description</h1>
-<h3>Name: VISHAL M S </h3>
-<h3>Register Number: 212224060306 </h3>
+<h3>Name: VISHAL MS </h3>
+<h3>Register Number: 212224060306</h3>
 
 
 <h3>AIM:</h3>
@@ -40,56 +40,69 @@
 <p>Treat unhealthy patients in each room. And check for the unhealthy patients in random room</p>
 <h3>STEP 5:</h3>
 <p>Measure the performance parameters: For each treatment performance incremented, for each movement performance decremented</p>
+
+## Program
 ```
 import random
+import time
 
-class MedicinePrescribingAgent:
+class HospitalEnvironment:
     def __init__(self):
+        # Two rooms with random patient temperatures
+        self.rooms = {
+            "A": random.uniform(97.0, 102.0),  # patient in Room A
+            "B": random.uniform(97.0, 102.0)   # patient in Room B
+        }
+
+    def sense_temperature(self, room):
+        return self.rooms[room]
+
+    def treat_patient(self, room):
+        # After treatment, reset temperature to healthy
+        self.rooms[room] = random.uniform(97.0, 98.5)
+
+
+class FeverAgent:
+    def __init__(self, environment):
+        self.env = environment
+        self.current_room = "A"  # start in Room A
         self.performance = 0
-        self.current_room = "Room1"
 
-    def sense(self, patient):
-        """Sense the patient's temperature"""
-        return patient["temperature"]
+    def step(self):
+        # Sense patient temperature in current room
+        temp = self.env.sense_temperature(self.current_room)
+        print(f"Agent in Room {self.current_room}, Patient Temp: {temp:.2f}°F")
 
-    def move(self):
-        """Move agent between Room1 and Room2"""
-        self.current_room = "Room2" if self.current_room == "Room1" else "Room1"
-        self.performance -= 1  # movement cost
-        print(f"Agent moved to {self.current_room}")
-
-    def treat(self, patient):
-        """Treat patient if unhealthy"""
-        if patient["temperature"] > 98.5:
-            print(f"Patient in {self.current_room} is unhealthy (Temp: {patient['temperature']}°F). Treating...")
-            self.performance += 10
-            patient["temperature"] = 98.5  # after treatment, set to normal
+        # Check and treat if unhealthy
+        if temp > 98.5:
+            print("⚕ Prescribed medicine (fever detected).")
+            self.env.treat_patient(self.current_room)
+            self.performance += 1
         else:
-            print(f"Patient in {self.current_room} is healthy (Temp: {patient['temperature']}°F).")
+            print(" Patient healthy, no treatment needed.")
 
-    def run(self, rooms, steps=5):
-        """Run the agent for a number of steps"""
-        for step in range(steps):
-            print(f"\n--- Step {step+1} ---")
-            patient = rooms[self.current_room]
-            temperature = self.sense(patient)
-            self.treat(patient)
-            self.move()  # move to next room
+        # Move to the other room
+        old_room = self.current_room
+        self.current_room = "B" if self.current_room == "A" else "A"
+        print(f"Moving from Room {old_room} to Room {self.current_room}")
+        self.performance -= 1
 
-        print("\nFinal Performance Score:", self.performance)
+        print(f"Current Performance Score: {self.performance}\n")
 
 
-# Environment: 2 rooms with patients
-rooms = {
-    "Room1": {"temperature": random.choice([97.5, 99.0, 100.2])},
-    "Room2": {"temperature": random.choice([97.8, 99.5, 101.0])}
-}
+# --- Simulation Run ---
+hospital = HospitalEnvironment()
+agent = FeverAgent(hospital)
 
-print("Initial Room States:", rooms)
+# Run for 6 steps (3 cycles through both rooms)
+for _ in range(6):
+    agent.step()
+    time.sleep(1)
+```
+# Output:
 
-# Create agent and run simulation
-agent = MedicinePrescribingAgent()
-agent.run(rooms, steps=6)```
-# OUTPUT
-<img width="726" height="800" alt="Screenshot 2025-09-30 104808" src="https://github.com/user-attachments/assets/8995b6fa-0259-47f3-8328-21abaed0f982" />
+<img width="561" height="482" alt="Screenshot 2025-09-21 204059" src="https://github.com/user-attachments/assets/18fe6d7a-59f1-4e83-ba00-7d7cac51141d" />
+<img width="570" height="504" alt="Screenshot 2025-09-21 204108" src="https://github.com/user-attachments/assets/f82c76bd-e9a8-4b8d-b4c6-8d5c17c961c6" />
 
+# Result:
+The PEAS framework helps in systematically designing AI agents by defining performance measures, environment, actuators, and sensors. It ensures clarity, efficiency, and adaptability in developing agents for real-world applications.
